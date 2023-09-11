@@ -7,10 +7,10 @@
 #
 # Authors: Martin Piron
 #
-# Name:     starterkitp.sh
-# Version:  2.0.7 (07-09-2023)
+# Name:     dialog_starterkit.sh
+# Version:  1.0.0 (11-09-2023)
 #
-# This script is very much a spin of from Adam Codega's: https://github.com/acodega/dialog-scripts/
+# This script was inspired by Adam Codega's: https://github.com/acodega/dialog-scripts/
 
 #########################################################################################
 # General Information
@@ -21,64 +21,27 @@
 # Lets users select which apps they want installed or not.
 
 #########################################################################################
-# SCRIPT VARIABLES
+# CUSTOM VARIABLES TO EDIT
 #########################################################################################
 
-# Apps to install format is FriendlyName,Location,Trigger
-APPS=( # App Name, Location, trigger
-  "1Password,/Applications/1Password.app,install_1password"
-  "Apparency,/Applications/Apparency.app,install_apparency"
-  "BBedit,/Applications/BBEdit.app,install_bbedit"
-  "Code Runner,/Applications/CodeRunner.app,install_coderunner"
+# Apps to install (format is FriendlyName,Location,JamfTrigger&IconName)
+APPS=(
   "GitHub Desktop,/Applications/GitHub Desktop.app,install_githubdesktop"
   "Icons,/Applications/Icons.app,install_icons"
   "Imazing Profile Editor,/Applications/iMazing Profile Editor.app,install_imazingprofileeditor"
   "iTerm,/Applications/iTerm.app,install_iterm"
   "Keka,/Applications/Keka.app,install_keka"
-  "Mac Evaluation Utility,/Applications/Mac Evaluation Utility.app,install_macevaluationutility"
-  "Microsoft Remote Desktop,/Applications/Microsoft Remote Desktop.app,install_msremotedesktop"
-  "Microsoft Teams,/Applications/Microsoft Teams.app,install_teams"
-  "Mist,/Applications/Mist.app,install_mist"
-  "Postman,/Applications/Postman.app,install_postman"
-  "Suspicious Package,/Applications/Suspicious Package.app,install_suspiciouspackage"
-  "Sublime Text,/Applications/Sublime Text.app,install_sublimetext"
-  "Visual Studio Code,/Applications/Visual Studio Code.app,install_visualstudiocode"
-  "Wireshark,/Applications/Wireshark.app,install_wireshark"
-  "Alfred,/Applications/Alfred 5.app,install_alfred"
-  "Firefox,/Applications/Firefox.app,install_firefox"
-  "Edge,/Applications/Microsoft Edge.app,install_edge"
-  "NetNewsWire,/Applications/NetNewsWire.app,install_netnewswire"
-  "Prune,/Applications/Prune.app,install_prune"
-  "Rectangle,/Applications/Rectangle.app,install_rectangle"
-  "Spotify,/Applications/Spotify.app,install_spotify"
-  "VLC,/Applications/VLC.app,install_vlc"
-  "WhatsApp,/Applications/WhatsApp.app,install_whatsapp"
 )
 
-# location of dialog and dialog command file
-DIALOG_APP="/usr/local/bin/dialog"
-DIALOG_COMMAND_FILE="/var/tmp/dialog.log"
-START_JSON_FILE="/var/tmp/dialog_START_JSON.json"
-INSTALL_JSON_FILE="/var/tmp/dialog_INSTALL_JSON.json"
-CHECKED_JSON_FILE="/var/tmp/dialog_CHECKED_JSON.json"
+# Your Icon Public Bucket
+BUCKET="https://s3.ap-southeast-2.amazonaws.com/***"
 
-# set progress total to the number of apps in the list
-PROGRESS_TOTAL=${#APPS[@]}
-
-# set icon based on whether computer is a desktop or laptop, we'll check to see if the computer has a battery
-# We can't check model names anymore since Mac Studio, MacBook Air M2 and newer report their name as "Mac##,#"
-if system_profiler SPPowerDataType | grep -q Battery; then
-  ICON="SF=laptopcomputer"
-  else
-  ICON="SF=desktopcomputer"
-fi
-
-# swiftDialog message
+# swiftDialog message (Update icon with path to your company logo)
 START_JSON='{
   "title" : "Starter Kit",
   "message" : "Please select the apps you want to install.\n\nScoll down to see them all.",
   "messagefont" : "colour=#666666,weight=medium",
-  "icon" : "${ICON}",
+  "icon" : "PATH_TO_LOGO",
   "button1text" : "OK",
   "button2text" : "Cancel",
   "checkboxstyle": {
@@ -91,12 +54,28 @@ INSTALL_JSON='{
   "title" : "Installing Apps",
   "message" : "Please wait while we install apps:",
   "messagefont" : "colour=#666666,weight=medium",
-  "icon" : "${ICON}",
+  "icon" : "PATH_TO_LOGO",
   "overlayicon" : "SF=arrow.down.circle.fill,palette=white,black,none,bgcolor=none",
   "position" : "bottomright",
   "button1text" : "Please wait"
 }'
 
+#########################################################################################
+# SCRIPT VARIABLES
+#########################################################################################
+
+# location of dialog and dialog command file
+DIALOG_APP="/usr/local/bin/dialog"
+DIALOG_COMMAND_FILE="/var/tmp/dialog.log"
+START_JSON_FILE="/var/tmp/dialog_START_JSON.json"
+INSTALL_JSON_FILE="/var/tmp/dialog_INSTALL_JSON.json"
+CHECKED_JSON_FILE="/var/tmp/dialog_CHECKED_JSON.json"
+
+# set progress total to the number of apps in the list
+PROGRESS_TOTAL=${#APPS[@]}
+
+# Jamf binary
+JAMF="/usr/local/bin/jamf"
 
 #########################################################################################
 # Testing and Logging
@@ -106,8 +85,7 @@ INSTALL_JSON='{
 
 # Enable logging to a file on disk and specify a directory
 ENABLE_LOGFILE="true" # false (default) or true to write the logs to a file
-LOGDIR="/Library/Management/Logs" # /var/tmp (default) or override by specifying a path
-
+LOGDIR="/Library/Management/Dialog-SK/Logs" # /var/tmp (default) or override by specifying a path
 
 #########################################################################################
 # Global Functions
@@ -148,13 +126,6 @@ cleanup() {
 trap cleanup EXIT
 _init
 
-# Extra Global Functions (from global_functions_extras)
-execute() { # Usage: execute "mkdir" "-p" "/private/temp/yay"
-  if ! "$@"; then
-    fatal "Failed Running: $*"; # exit on fail
-  fi
-}
-
 #########################################################################################
 # Script Functions
 #########################################################################################
@@ -178,34 +149,42 @@ finalise(){
 # Install swiftDialog if not installed
 if [[ ! -e "/Library/Application Support/Dialog/Dialog.app" ]]; then
   warn "swiftDialog missing, installing"
-  /usr/local/bin/jamf policy -event install_swiftdialog
+  "${JAMF}" policy -event install_swiftdialog
 else
   info "swiftDialog already installed"
 fi
 
-# Create icons folder
-if [[ ! -e "/Library/Management/SEEK/Branding/Icons/" ]]; then
+# Install jq if not installed
+if [[ ! -e "/usr/local/bin/jq" ]]; then
+  warn "JQ missing, installing"
+  "${JAMF}" policy -event install_jq
+else
+  info "JQ already installed"
+fi
+
+# Create icons folder and download them
+if [[ ! -e "/Library/Management/Dialog-SK/Branding/Icons/" ]]; then
   info "Creating Icons folder"
-  mkdir "/Library/Management/SEEK/Branding/Icons/"
+  mkdir -p "/Library/Management/Dialog-SK/Branding/Icons/"
 else
   info "Icons folder already exists"
 fi
-# Download them
+
 for APP in "${APPS[@]}"; do
   APP_NAME=$(echo "$APP" | cut -d ',' -f1)
   APP_TRIGGER=$(echo "$APP" | cut -d ',' -f3)
-  if [[ ! -e "/Library/Management/SEEK/Branding/Icons/${APP_TRIGGER}.png" ]]; then
+  if [[ ! -e "/Library/Management/Dialog-SK/Branding/Icons/${APP_TRIGGER}.png" ]]; then
     warn "${APP_NAME} icon not found, downloading"
-    curl "https://s3.ap-southeast-2.amazonaws.com/mdm.myseek.xyz/Branding/icons/${APP_TRIGGER}.png" -o "/Library/Management/SEEK/Branding/Icons/${APP_TRIGGER}.png"
-  elif [[ -e "/Library/Management/SEEK/Branding/Icons/${APP_TRIGGER}.png" ]]; then
+    curl "${BUCKET}${APP_TRIGGER}.png" -o "/Library/Management/Dialog-SK/Branding/Icons/${APP_TRIGGER}.png"
+  elif [[ -e "/Library/Management/Dialog-SK/Branding/Icons/${APP_TRIGGER}.png" ]]; then
     info "${APP_NAME} icon already cached"
   fi
 done
 
 # Create the list of apps and format it in json
-CHECKBOX_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/SEEK/Branding/Icons/%s.png\"}\n", $1, $3}' | jq -s '{"checkbox": .}')
+CHECKBOX_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/Dialog-SK/Branding/Icons/%s.png\"}\n", $1, $3}' | jq -s '{"checkbox": .}')
 
-LISTITEMS_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/SEEK/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | jq -s '{"listitem": .}')
+LISTITEMS_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/Dialog-SK/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | jq -s '{"listitem": .}')
 
 # Merge json variables into one file
 START_MERGED_JSON=$(jq -n --argjson START_JSON "${START_JSON}" --argjson CHECKBOX_JSON "${CHECKBOX_JSON}" '$START_JSON + $CHECKBOX_JSON')
@@ -274,7 +253,7 @@ for APP in "${APPS[@]}"; do
       info "${APP_NAME} not installed, installing"
       dialog_command "listitem: ${APP_NAME}: wait"
       dialog_command "progresstext: Installing ${APP_NAME}"
-      /usr/local/bin/jamf policy -event "${APP_TRIGGER}"
+      "${JAMF}" policy -event "${APP_TRIGGER}"
       sleep 1
       if [[ -e "${APP_LOCATION}" ]]; then
         info "${APP_NAME} installed"
@@ -300,7 +279,7 @@ for APP in "${APPS[@]}"; do
   sleep 1
 done
 
-# Loop thru array again and report back if failed
+# Loop through failed array and report back if required
 if [[ ${#FAILED_STATUS[@]} -eq 0 ]] ; then
   info "All apps installed."
   dialog_command "progresstext: All done!"
@@ -311,6 +290,3 @@ fi
 
 # Finishing up
 finalise
-
-# Cleanup
-rm /private/var/tmp/dialog*
