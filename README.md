@@ -21,3 +21,5 @@ Make sure to replace the icon argument in the START_JSON and INSTALL_JSON with y
 
 This script uses SwiftDialog and JQ, please make sure the install_swiftdialog and install_jq policy exists.
 
+<img width="932" alt="dialog_starterkit-01" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/3298f471-8971-4f1a-ab04-1f3eea194401">
+<img width="932" alt="dialog_starterkit-02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/4138fb4e-e9f1-4304-b55a-f1b1bb7e3fbb">
