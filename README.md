@@ -6,7 +6,7 @@ Users have the option to skip any apps they don't want.
 
 ## Things to look for
 
-The working directory is /Library/Management/Dialog-SK
+The working directory is ''/Library/Management/Dialog-SK''
 
 ### Icons
 
