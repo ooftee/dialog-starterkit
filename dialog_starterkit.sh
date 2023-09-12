@@ -202,7 +202,7 @@ finalise(){
 
 # Exit if user clicked cancel (array is empty)
   if [[ ! "${APPS_SELECTED[*]}" ]]; then
-   fatal "User clicked cancel."
+    fatal "User clicked cancel."
   fi
 
 # Read the JSON object and construct an array of key-value pairs
@@ -238,7 +238,7 @@ finalise(){
   
   info "Launching Dialog - App Install"
   eval "$DIALOG_CMD" & sleep 2
- 
+
 # Loop thru array and install apps if they were selected
   for APP in "${APPS[@]}"; do
     APP_NAME=$(echo "${APP}" | cut -d ',' -f1)
