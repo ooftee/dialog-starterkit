@@ -9,6 +9,7 @@
 #
 # Name:     dialog_starterkit.sh
 # Version:  1.0.0 (11-09-2023)
+# Repo:     https://github.com/ooftee/dialog-starterkit
 #
 # This script was inspired by Adam Codega's: https://github.com/acodega/dialog-scripts/
 
