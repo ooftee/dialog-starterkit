@@ -8,10 +8,10 @@ Why maintain multiple enrolment workflows when users can simply use a Starter Ki
 
 This bash script allows users to install apps in bulk using custom jamf triggers with the option to skip any apps they don't want.
 
-## Things to look for
+## Working Directory
 
-The working directory is `/Library/Management/Dialog-SarterKit`
-This is where icons and logs will be stored.
+The script uses a working directory to store icons and logs.
+The path is `/Library/Management/Dialog-SarterKit`
 
 ### Define your Array
 
