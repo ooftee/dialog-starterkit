@@ -6,6 +6,7 @@ Best of all, the user can continue with other tasks while the Apps are installed
 For MacAdmins, using Starter Kits allows you to keep the enrolment process lean, fast and generic.
 Why maintain multiple enrolment workflows when users can simply use a Starter Kit to get the Apps they need?
 
+Starter Kits is a bash script that uses JQ and SwiftDialog under the hood. Admins only need to configure an array of App definitions. The user is presented with the options and can toggle on/off the Apps they want to install. The script also includes logic to skip Apps that are already installed. 
 This bash script allows users to install apps in bulk using custom jamf triggers with the option to skip any apps they don't want.
 
 ## Working Directory
