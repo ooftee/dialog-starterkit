@@ -1,9 +1,6 @@
 # dialog-starterkit
 
-In todays corporate world, the demand for expeditious processes is paramount, alongside a keen emphasis on customization. 
-Enter Starter Kits, a solution tailored to this need.
-
-Starter Kits offer a streamlined approach, enabling admin to use a single build profile for all computers. 
+Starter Kits offers a streamlined approach for mac admins to use a single build profile for all computers. 
 Users are then empowered to efficiently install multiple applications with just a few clicks.
 
 This bash script allows users to install apps in bulk using custom jamf triggers with the option to skip any apps they don't want.
@@ -15,9 +12,9 @@ This is where icons and logs will be stored.
 
 ### Define your Array
 
-The `APPS` array is the mos important part of the script, it defines which apps you want to install and how to detect if it was installed succesfully or not.
+The `APPS` array is the most important part of the script, it defines which apps you want to install and how to detect if it was installed successfully or not.
 Each app requires 3 variables:
-- FriendlyName: THe name of the app that will be displayed in the list
+- FriendlyName: The name of the app that will be displayed in the list
 - Location: Where the app gets installed, this is used to validate the installation
 - JamfTrigger&IconName: Custom event trigger in jamf, also the icon name (see below)
 
