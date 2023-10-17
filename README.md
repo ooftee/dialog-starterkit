@@ -1,7 +1,10 @@
 # dialog-starterkit
 
-Starter Kits offers a streamlined approach for mac admins to use a single build profile for all computers. 
-Users are then empowered to efficiently install multiple applications with just a few clicks.
+Starter Kits provide end users with a simple and intuitive way to select and install a group of Apps relevant to their role. 
+Best of all, the user can continue with other tasks while the Apps are installed in the background.
+
+For MacAdmins, using Starter Kits allows you to keep the enrolment process lean, fast and generic.
+Why maintain multiple enrolment workflows when users can simply use a Starter Kit to get the Apps they need?
 
 This bash script allows users to install apps in bulk using custom jamf triggers with the option to skip any apps they don't want.
 
