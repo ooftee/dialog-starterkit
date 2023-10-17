@@ -7,9 +7,11 @@ For MacAdmins, using Starter Kits allows you to keep the enrolment process lean,
 Why maintain multiple enrolment workflows when users can simply use a Starter Kit to get the Apps they need?
 
 Starter Kits is a bash script that uses JQ and SwiftDialog under the hood. Admins only need to configure an array of App definitions. The user is presented with the options and can toggle on/off the Apps they want to install. The script also includes logic to skip Apps that are already installed. 
-This bash script allows users to install apps in bulk using custom jamf triggers with the option to skip any apps they don't want.
 
-## Working Directory
+
+# Configuration
+
+### Working Directory
 
 The script uses a working directory to store icons and logs.
 The path is `/Library/Management/Dialog-SarterKit`
@@ -18,11 +20,17 @@ The path is `/Library/Management/Dialog-SarterKit`
 
 The `APPS` array is the most important part of the script, it defines which apps you want to install and how to detect if it was installed successfully or not.
 Each app requires 3 variables:
-- FriendlyName: The name of the app that will be displayed in the list
-- Location: Where the app gets installed, this is used to validate the installation
-- JamfTrigger&IconName: Custom event trigger in jamf, also the icon name (see below)
+- FriendlyName: The friendly name of the App that will be displayed in the list to the user
+- Location: Where the App gets installed, this is used to detect if the App is already installed and validate the installation
+- JamfTrigger (and IconName): Custom event trigger in JAMF and also the icon name (see below)
 
-ie: iTerm,/Applications/iTerm.app,install_iterm
+For example:
+```bash
+APPS=(
+  iTerm,/Applications/iTerm.app,install_iterm
+  iTerm,/Applications/iTerm.app,install_iterm
+)
+```
 
 ### Icons
 
