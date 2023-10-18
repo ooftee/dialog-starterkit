@@ -8,7 +8,7 @@
 # Authors: Martin Piron
 #
 # Name:     dialog_starterKit.sh
-# Version:  1.0.0 (12-09-2023)
+# Version:  1.0.1 (18-10-2023)
 # Repo:     https://github.com/ooftee/dialog-starterKit
 #
 # This script was inspired by Adam Codega's: https://github.com/acodega/dialog-scripts/
@@ -77,6 +77,10 @@
 
 # Jamf binary
   JAMF="/usr/local/bin/jamf"
+
+# Dependencies Triggers
+  DIALOG_TRIGGER="install_swiftdialog"
+  JQ_TRIGGER="install_jq"
 
 #########################################################################################
 # Logging
@@ -148,7 +152,7 @@ finalise(){
 # Install swiftDialog if not installed
   if [[ ! -e "/Library/Application Support/Dialog/Dialog.app" ]]; then
     warn "swiftDialog missing, installing"
-    "${JAMF}" "policy" -event "install_swiftdialog"
+    "${JAMF}" "policy" -event "${DIALOG_TRIGGER}"
   else
     info "swiftDialog already installed"
   fi
@@ -156,7 +160,7 @@ finalise(){
 # Install jq if not installed
   if [[ ! -e "/usr/local/bin/jq" ]]; then
     warn "JQ missing, installing"
-    "${JAMF}" "policy" -event "install_jq"
+    "${JAMF}" "policy" -event "${JQ_TRIGGER}"
   else
     info "JQ already installed"
   fi
