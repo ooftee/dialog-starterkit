@@ -13,8 +13,11 @@ Starter Kits is a bash script that uses JQ and SwiftDialog under the hood. Admin
 
 ### Working Directory
 
-The script uses a working directory to store icons and logs.
-The path is `/Library/Management/Dialog-SarterKit`
+The script uses a working directory to store icons and logs at the path: 
+
+`/Library/Management/Dialog-SarterKit`
+
+Due to the use of JQ and single quotes, changing this path would you to modify the main script.
 
 ### Define your Array
 
@@ -35,21 +38,21 @@ APPS=(
 ### Icons
 
 Icons are cashed locally, please provide a public URL to download them from.
-Make sure the icon name is the same as the jamf custom trigger.
+Make sure the icon name is the same as the JAMF custom trigger.
 
-for example if your policy trigger is `install_iterm` make sure the icon is named `install_iterm.png`
+For example, if your policy trigger is `install_iterm` make sure the icon is named `install_iterm.png`
 
 ### Branding
 
-Due to the single quoting, variable can't be used in `START_JSON` and `INSTALL_JSON`.
-It is recommended to replace the icon argument in there with your company logo.
-Feel free to change message and title to fit your corporate messaging style.
+Due to the use of JQ and single quotes, variables can't be used in `START_JSON` and `INSTALL_JSON`.
+It's recommended to replace the icon argument in there with your company logo.
+Feel free to change the message and title to fit your corporate messaging style.
 
 ### Requirements
 
 This script uses SwiftDialog and JQ. 
-Please ensure those are installed in the /usr/local/bin folder.
-If the script is unable to find the binaries it will attempt to install them with these custom triggers `install_swiftdialog` and `install_jq`.
+Please ensure those are installed in the standard `/usr/local/bin` folder.
+If the script is unable to find the binaries, it will attempt to install them with these custom triggers `install_swiftdialog` and `install_jq`, which you can modify in the script variables.
 
 <img width="932" alt="dialog_starterkit-01" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/3298f471-8971-4f1a-ab04-1f3eea194401">
 <img width="932" alt="dialog_starterkit-02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/4138fb4e-e9f1-4304-b55a-f1b1bb7e3fbb">
