@@ -12,6 +12,7 @@
 # Repo:     https://github.com/ooftee/dialog-starterKit
 #
 # This script was inspired by Adam Codega's: https://github.com/acodega/dialog-scripts/
+# Thanks to James Corcoran for his help, support and snippets: https://github.com/jorks
 
 #########################################################################################
 # General Information
