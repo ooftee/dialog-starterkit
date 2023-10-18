@@ -57,7 +57,6 @@ This script uses SwiftDialog and JQ.
 Please ensure those are installed in the standard `/usr/local/bin` folder.
 If the script is unable to find the binaries, it will attempt to install them with these custom triggers `install_swiftdialog` and `install_jq`, which you can modify in the script variables.
 
-<img width="932" alt="dialog_starterkit_03" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/de0d11c2-45a3-4c3f-ac29-20b5024e0eea">
-<img width="932" alt="dialog_starterkit_02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/14810336-5691-4338-8eb9-59062e7a29d4">
 <img width="932" alt="dialog_starterkit_01" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/74eecf80-a6e9-4323-a978-44ade193a7b5">
-
+<img width="932" alt="dialog_starterkit_02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/14810336-5691-4338-8eb9-59062e7a29d4">
+<img width="932" alt="dialog_starterkit_03" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/de0d11c2-45a3-4c3f-ac29-20b5024e0eea">
