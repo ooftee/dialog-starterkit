@@ -8,6 +8,8 @@ Why maintain multiple enrolment workflows when users can simply use a Starter Ki
 
 Starter Kits is a bash script that uses JQ and SwiftDialog under the hood. Admins only need to configure an array of App definitions. The user is presented with the options and can toggle on/off the Apps they want to install. The script also includes logic to skip Apps that are already installed. 
 
+This would typically be presented to users via JAMF Self Service.
+
 
 # Configuration
 
