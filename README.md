@@ -27,8 +27,8 @@ Each app requires 3 variables:
 For example:
 ```bash
 APPS=(
-  iTerm,/Applications/iTerm.app,install_iterm
-  iTerm,/Applications/iTerm.app,install_iterm
+  "iTerm,/Applications/iTerm.app,install_iterm"
+  "GitHub Desktop,/Applications/GitHub Desktop.app,install_githubdesktop"
 )
 ```
 
