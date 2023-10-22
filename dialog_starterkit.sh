@@ -167,9 +167,9 @@ finalise(){
   fi
 
 # Create icons folder and download them
-  if [[ ! -e "/Library/Management/Dialog-SarterKit/Branding/Icons/" ]]; then
+  if [[ ! -e "/Library/Management/Dialog-StarterKit/Branding/Icons/" ]]; then
     info "Creating Icons folder"
-    mkdir -p "/Library/Management/Dialog-SarterKit/Branding/Icons/"
+    mkdir -p "/Library/Management/Dialog-StarterKit/Branding/Icons/"
   else
     info "Icons folder already exists"
   fi
@@ -177,18 +177,18 @@ finalise(){
   for APP in "${APPS[@]}"; do
     APP_NAME=$(echo "$APP" | cut -d ',' -f1)
     APP_TRIGGER=$(echo "$APP" | cut -d ',' -f3)
-    if [[ ! -e "/Library/Management/Dialog-SarterKit/Branding/Icons/${APP_TRIGGER}.png" ]]; then
+    if [[ ! -e "/Library/Management/Dialog-StarterKit/Branding/Icons/${APP_TRIGGER}.png" ]]; then
       warn "${APP_NAME} icon not found, downloading"
-      curl "${BUCKET}${APP_TRIGGER}.png" -o "/Library/Management/Dialog-SarterKit/Branding/Icons/${APP_TRIGGER}.png"
-    elif [[ -e "/Library/Management/Dialog-SarterKit/Branding/Icons/${APP_TRIGGER}.png" ]]; then
+      curl "${BUCKET}${APP_TRIGGER}.png" -o "/Library/Management/Dialog-StarterKit/Branding/Icons/${APP_TRIGGER}.png"
+    elif [[ -e "/Library/Management/Dialog-StarterKit/Branding/Icons/${APP_TRIGGER}.png" ]]; then
       info "${APP_NAME} icon already cached"
     fi
   done
 
 # Create the list of apps and format it in json
-  CHECKBOX_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/Dialog-SarterKit/Branding/Icons/%s.png\"}\n", $1, $3}' | jq -s '{"checkbox": .}')
+  CHECKBOX_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\"}\n", $1, $3}' | jq -s '{"checkbox": .}')
   
-  LISTITEMS_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/Dialog-SarterKit/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | jq -s '{"listitem": .}')
+  LISTITEMS_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | jq -s '{"listitem": .}')
 
 # Merge json variables into one file
   START_MERGED_JSON=$(jq -n --argjson START_JSON "${START_JSON}" --argjson CHECKBOX_JSON "${CHECKBOX_JSON}" '$START_JSON + $CHECKBOX_JSON')
