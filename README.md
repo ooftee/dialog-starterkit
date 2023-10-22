@@ -17,7 +17,7 @@ This would typically be presented to users via JAMF Self Service.
 
 The script uses a working directory to store icons and logs at the path: 
 
-`/Library/Management/Dialog-SarterKit`
+`/Library/Management/Dialog-StarterKit`
 
 Due to the use of JQ and single quotes, changing this path would you to modify the main script.
 
