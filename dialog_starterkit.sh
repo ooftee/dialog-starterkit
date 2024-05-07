@@ -186,9 +186,17 @@ finalise(){
   done
 
 # Create the list of apps and format it in json
-  CHECKBOX_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\"}\n", $1, $3}' | jq -s '{"checkbox": .}')
+  CHECKBOX_JSON=$(
+    printf '%s\n' "${APPS[@]}" | \
+    awk -F ',' '{printf "{\"label\":\"%s\",\"checked\":true,\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\"}\n", $1, $3}' | \
+    jq -s '{"checkbox": .}'
+    )
   
-  LISTITEMS_JSON=$(printf '%s\n' "${APPS[@]}" | awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | jq -s '{"listitem": .}')
+  LISTITEMS_JSON=$(
+    printf '%s\n' "${APPS[@]}" | \
+    awk -F ',' '{printf "{\"title\":\"%s\",\"icon\":\"/Library/Management/Dialog-StarterKit/Branding/Icons/%s.png\",\"status\":\"pending\",\"statustext\":\"Pending\"}\n", $1, $3}' | \
+    jq -s '{"listitem": .}'
+    )
 
 # Merge json variables into one file
   START_MERGED_JSON=$(jq -n --argjson START_JSON "${START_JSON}" --argjson CHECKBOX_JSON "${CHECKBOX_JSON}" '$START_JSON + $CHECKBOX_JSON')
