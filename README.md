@@ -39,7 +39,7 @@ APPS=(
 
 ### Icons
 
-Icons are cashed locally, please provide a public URL to download them from.
+Icons are cached locally, please provide a public URL to download them from.
 A typical way of doing this is to use an Public Amazon S3 bucket.
 Make sure the icon name is the same as the JAMF custom trigger.
 
