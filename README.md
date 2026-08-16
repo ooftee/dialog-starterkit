@@ -74,13 +74,15 @@ Optional **Testing Mode**. When `true`, Jamf install triggers and destructive fi
 - Inspect Mode preset 1 does not reliably show or update the config `message`; completion is signalled by the window closing itself.
 - Selection height defaults to 450 (`SELECTION_DIALOG_HEIGHT`). Auto-close delay is `INSPECT_AUTO_CLOSE_SECONDS` (60).
 
-# Screenshots (v1 UI)
+# Screenshots
 
-Earlier versions used a command-file list dialog. Screenshots below reflect that UI; v2 uses Inspect Mode for progress.
+### App selection
 
-<img width="932" alt="dialog_starterkit_01" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/74eecf80-a6e9-4323-a978-44ade193a7b5">
-<img width="932" alt="dialog_starterkit_02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/14810336-5691-4338-8eb9-59062e7a29d4">
-<img width="932" alt="dialog_starterkit_03" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/de0d11c2-45a3-4c3f-ac29-20b5024e0eea">
+<img width="932" alt="App selection" src="Screenshots/App_selection.png">
+
+### App install (Inspect Mode)
+
+<img width="932" alt="App install" src="Screenshots/App_install.png">
 
 # Version History
 
