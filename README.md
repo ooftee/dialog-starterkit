@@ -1,35 +1,48 @@
 # dialog-starterkit
 
-Starter Kits provide end users with a simple and intuitive way to select and install a group of Apps relevant to their role. 
-Best of all, the user can continue with other tasks while the Apps are installed in the background.
+Starter Kits give end users a simple way to select and install a group of apps relevant to their role. Users can keep working while apps install in the background.
 
-For MacAdmins, using Starter Kits allows you to keep the enrolment process lean, fast and generic.
-Why maintain multiple enrolment workflows when users can simply use a Starter Kit to get the Apps they need?
+For MacAdmins, Starter Kits keep enrolment lean and generic. Instead of maintaining many enrolment workflows, users pick the apps they need from Self Service.
 
-Starter Kits is a bash script that uses JQ and SwiftDialog under the hood. Admins only need to configure an array of App definitions. The user is presented with the options and can toggle on/off the Apps they want to install. The script also includes logic to skip Apps that are already installed. 
+**Version:** 2.0.0 (17/08/2026)  
+**Requires:** macOS 15+ (includes system `jq`), SwiftDialog 3.1.0+, Jamf
 
-This would typically be presented to users via JAMF Self Service.
+This release modernises the starter kit to zsh, checkbox selection, and SwiftDialog Inspect Mode for install progress.
 
+# Workflow
+
+1. Validate macOS 15+, Jamf, and a logged-in console user.
+2. Ensure SwiftDialog 3.1.0+ is installed (Jamf trigger when missing), then verify the dialog icon path.
+3. Exit without prompting when a Zoom or Teams meeting appears active.
+4. Validate the app catalogue and cache branding icons where possible.
+5. Present a timed checkbox selection dialog with Install, Cancel, and Support.
+6. Launch SwiftDialog Inspect Mode (preset 1) for the selected apps only.
+7. Install each selected app with `jamf policy -event`, retrying up to three times and verifying the app path.
+8. On success, auto-close the progress window after 60 seconds (Done remains available sooner). On failure, show a summary dialog.
 
 # Configuration
 
-### Working Directory
+Edit the **VARIABLES TO EDIT** section at the top of `dialog_starterkit.sh`.
 
-The script uses a working directory to store icons and logs at the path: 
+### Branding
 
-`/Library/Management/Dialog-StarterKit`
+| Variable | Purpose |
+|----------|---------|
+| `ICON` | Company / Self Service logo path used in dialogs |
+| `SUPPORT_URL` | URL opened by the Support info button |
+| `ICON_BASE_URL` | Public URL prefix for per-app PNG icons |
+| `MANAGEMENT_DIR` | Working directory for icons and logs (default `/Library/Management/Dialog-StarterKit`) |
 
-Due to the use of JQ and single quotes, changing this path would you to modify the main script.
+### App catalogue
 
-### Define your Array
+The `APPS` array defines what can be installed. Each entry is:
 
-The `APPS` array is the most important part of the script, it defines which apps you want to install and how to detect if it was installed successfully or not.
-Each app requires 3 variables:
-- FriendlyName: The friendly name of the App that will be displayed in the list to the user
-- Location: Where the App gets installed, this is used to detect if the App is already installed and validate the installation
-- JamfTrigger (and IconName): Custom event trigger in JAMF and also the icon name (see below)
+`FriendlyName,Location,JamfTrigger`
 
-For example:
+- **FriendlyName** — label shown to the user  
+- **Location** — absolute install path used to detect success / already installed  
+- **JamfTrigger** — custom event trigger; also the icon filename (`trigger.png`)
+
 ```bash
 APPS=(
   "iTerm,/Applications/iTerm.app,install_iterm"
@@ -39,24 +52,43 @@ APPS=(
 
 ### Icons
 
-Icons are cached locally, please provide a public URL to download them from.
-A typical way of doing this is to use an Public Amazon S3 bucket.
-Make sure the icon name is the same as the JAMF custom trigger.
+Icons are cached under `${MANAGEMENT_DIR}/Branding/Icons/`. Host PNGs at `${ICON_BASE_URL}/${trigger}.png`. Missing or non-image downloads are discarded (object stores often return XML error bodies with HTTP 200). Apps without a usable icon still appear; the icon key is omitted so SwiftDialog does not exit 202.
 
-For example, if your policy trigger is `install_iterm` make sure the icon is named `install_iterm.png`
+### Dependencies
 
-### Branding
+| Tool | Notes |
+|------|-------|
+| SwiftDialog | Installed via `install_swiftdialog` when missing or below 3.1.0 (change `SWIFTDIALOG_INSTALL_TRIGGER` if needed) |
+| jq | Shipped with macOS 15+ at `/usr/bin/jq`; no separate install |
 
-Due to the use of JQ and single quotes, variables can't be used in `START_JSON` and `INSTALL_JSON`.
-It's recommended to replace the icon argument in there with your company logo.
-Feel free to change the message and title to fit your corporate messaging style.
+The macOS 15+ requirement covers both SwiftDialog 3 and system `jq`.
 
-### Requirements
+### Jamf Parameter 4
 
-This script uses SwiftDialog and JQ. 
-Please ensure those are installed in the standard `/usr/local/bin` folder.
-If the script is unable to find the binaries, it will attempt to install them with these custom triggers `install_swiftdialog` and `install_jq`, which you can modify in the script variables.
+Optional **Testing Mode**. When `true`, Jamf install triggers and destructive file operations are logged and skipped.
 
-<img width="932" alt="dialog_starterkit_01" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/74eecf80-a6e9-4323-a978-44ade193a7b5">
-<img width="932" alt="dialog_starterkit_02" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/14810336-5691-4338-8eb9-59062e7a29d4">
-<img width="932" alt="dialog_starterkit_03" src="https://github.com/ooftee/dialog-starterkit/assets/88021434/de0d11c2-45a3-4c3f-ac29-20b5024e0eea">
+# Notes
+
+- Designed to run from a Jamf policy as root; SwiftDialog is launched as root with it.
+- Temporary workspace is widened from `mktemp`'s 0700 to 755 (files 644). SwiftDialog cannot read a 0700 directory and exits 202.
+- Inspect Mode preset 1 does not reliably show or update the config `message`; completion is signalled by the window closing itself.
+- Selection height defaults to 450 (`SELECTION_DIALOG_HEIGHT`). Auto-close delay is `INSPECT_AUTO_CLOSE_SECONDS` (60).
+
+# Screenshots
+
+### App selection
+
+<img width="932" alt="App selection" src="Screenshots/App_selection.png">
+
+### App install (Inspect Mode)
+
+<img width="932" alt="App install" src="Screenshots/App_install.png">
+
+# Version History
+
+### 2.0.0 (17/08/2026)
+- Modernised to zsh with SwiftDialog 3 Inspect Mode, icon validation, meeting deferral, install retries, Support button, and 60s auto-close
+- Requires macOS 15+ (system `jq`) and SwiftDialog 3.1.0+
+
+### 1.0.1 (18/10/2023)
+- Initial public bash starter kit with checkbox selection and command-file install progress
